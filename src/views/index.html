@@ -61,20 +61,7 @@
     </script>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script>
-        document.getElementById("hexa").value="";
-        document.getElementById("text").value="";
-        function read(){
-            var anyBase = require('any-base'),
-            dec2hex = anyBase(anyBase.BIN, anyBase.HEX);
-            text = require('string-to-binary')(document.getElementById("text").value);
-            document.getElementById("shell-out").value+="Text Input:"+document.getElementById("text").value+"\n"
-            document.getElementById("shell-out").value+="Binary Input:"+text+"\n"
-            text=dec2hex(text);
-            document.getElementById("shell-out").value+="Hexadecimal Input:"+text+"\n"
-            document.getElementById("hexa").value=text;
-        }
-    </script>
+    <script src="assets/js/main.js"></script>
 </body>
 
 </html>
