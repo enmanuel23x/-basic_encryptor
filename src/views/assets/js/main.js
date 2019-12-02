@@ -1,7 +1,13 @@
     document.getElementById("hexa").value="";
+    var finalout= document.getElementById("hexa")
     document.getElementById("text").value="";
     var shell= document.getElementById("shell-out")
     var bitwiseBuffer = require('bitwise-buffer')
+    var anyBase = require('any-base'),
+            bin2hex = anyBase(anyBase.BIN, anyBase.HEX);
+            hex2bin = anyBase(anyBase.HEX, anyBase.BIN);
+            hex2dec = anyBase(anyBase.HEX, anyBase.DEC);
+            dec2hex = anyBase(anyBase.DEC, anyBase.HEX);
     var { xor, and, or, nor, not, leftShift, rightShift, lshift, rshift } = bitwiseBuffer
     var sbox=[
             ["63","7C","77","7B","F2","6B","6F","C5","30","01","67","2B","FE","D7","AB","76"],
@@ -27,15 +33,13 @@
                     str+=" "
                 }
             }
-            var anyBase = require('any-base'),
-            dec2hex = anyBase(anyBase.BIN, anyBase.HEX);
-            hex2bin = anyBase(anyBase.HEX, anyBase.BIN);
-            hex2dec = anyBase(anyBase.HEX, anyBase.DEC);
+
             text = require('string-to-binary')(str);
-            shell.value+="Text Input:"+document.getElementById("text").value+"\n"
-            shell.value+="Binary Input: "+text+"\n"
-            text=dec2hex(text);
-            shell.value+="Hexadecimal Input: "+text+"\n"
+            shell.value+="Text Input:"+document.getElementById("text").value+"\n\n"
+            shell.value+="Binary Input: "+text+"\n\n"
+            text=bin2hex(text);
+            //text="3243F6A8885A308D313198A2E0370734"
+            shell.value+="Hexadecimal Input: "+text+"\n\n"
             var arr1=[],arr2=[],cont=0
             //ciclo para formar la matriz
             while(text.length>0){
@@ -52,6 +56,7 @@
                     cont=0;
                 }
             }
+            //Clave Principal: 2B7E151628AED2A6ABF7158809CF4F3C
             var clavep=[
                 ["2B","7E","15","16"],
                 ["28","AE","D2","A6"],
@@ -67,39 +72,33 @@
             }
             reply=[]
             for(conti=0;conti<claves.length;conti++){
-                reply.push(transpose(claves[conti]))
+                reply.push(upper(transpose(claves[conti])))
             }
-            console.log("Matriz inicial: "); console.log(transpose(arr2));
-            console.log("Claves: "); console.log(reply);
-            var AddRoundKey = step3(transpose(arr2),transpose(clavep))
-            console.log("AddRoundKey: "); console.log(AddRoundKey);
-            var SubBytes = step4(AddRoundKey);
-            console.log("SubBytes: "); console.log(SubBytes);
-            var ShiftRows= step5(SubBytes);
-            console.log("ShiftRows: "); console.log(ShiftRows);
-            //document.getElementById("shell-out").value+=
-            arr2=transpose(arr2)
             //Salida por Shell
             //Estado
-            shell.value+="Estado: \n";print4x4(arr2)
+            shell.value+="Estado: \n";print4x4(transpose(arr2))
             //Claves
-            shell.value+="Clave inicial: \n";print4x4(reply[0])
-            shell.value+="SubClave 1: \n";print4x4(reply[1])
-            shell.value+="SubClave 2: \n";print4x4(reply[2])
-            shell.value+="SubClave 3: \n";print4x4(reply[3])
-            shell.value+="SubClave 4: \n";print4x4(reply[4])
-            shell.value+="SubClave 5: \n";print4x4(reply[5])
-            shell.value+="SubClave 6: \n";print4x4(reply[6])
-            shell.value+="SubClave 7: \n";print4x4(reply[7])
-            shell.value+="SubClave 8: \n";print4x4(reply[8])
-            shell.value+="SubClave 9: \n";print4x4(reply[9])
-            shell.value+="SubClave 10: \n";print4x4(reply[10])
-            //AddRoundKey
-            shell.value+="AddRoundKey: \n";print4x4(AddRoundKey)
-            //SubBytes
-            shell.value+="SubBytes: \n";print4x4(SubBytes)
-            //ShiftRows
-            shell.value+="ShiftRows: \n";print4x4(ShiftRows)
+            shell.value+="Claves: \n\n";printkeys(reply)
+            let AddRoundKey = upper(step3(transpose(arr2).slice(0),transpose(clavep).slice(0)))
+            let SubBytes,ShiftRows,MixColumns
+            for(let myfinali=1;myfinali<reply.length-1;myfinali++){
+                //Rondas 1-9
+                SubBytes = upper(step4(AddRoundKey.slice(0)));
+                ShiftRows= upper(step5(SubBytes.slice(0)));
+                MixColumns =step6(ShiftRows.slice(0))
+                finalprint([AddRoundKey,SubBytes,ShiftRows,MixColumns,reply[myfinali]],myfinali)
+                AddRoundKey = upper(step3(MixColumns.slice(0),reply[myfinali].slice(0)))
+            }
+            //Ronda 10
+            SubBytes = upper(step4(AddRoundKey.slice(0)));
+            ShiftRows= upper(step5(SubBytes.slice(0)));
+            MixColumns=[["  ","  ","  ","  "],["  ","  ","  ","  "],["  ","  ","  ","  "],["  ","  ","  ","  "]]
+            finalprint([AddRoundKey,SubBytes,ShiftRows,MixColumns,reply[10]],10)
+            //Texto encriptado
+            AddRoundKey = upper(step3(ShiftRows.slice(0),reply[10].slice(0)))
+            shell.value+="Salida:\n"
+            print4x4(AddRoundKey.slice(0))
+            printencrypt(transpose(AddRoundKey.slice(0)))
         }
         //paso 2
         function step2(claveprev,clavepost,pivot,r){
@@ -152,8 +151,16 @@
             for(i=0;i<4;i++){
                 row=[]
                 for(j=0;j<4;j++){
-                    a = Buffer.from(state[i][j], 'hex')
-                    b = Buffer.from(key[i][j], 'hex')
+                    mya=state[i][j]
+                    if(mya.length % 2!=0){
+                        mya="0"+mya
+                    }
+                    myb=key[i][j]
+                    if(myb.length % 2!=0){
+                        myb="0"+myb
+                    }
+                    a = Buffer.from(mya, 'hex')
+                    b = Buffer.from(myb, 'hex')
                     row.push(xor(a, b).toString('hex'))
                 }
                 if(myvalue.length==0){
@@ -203,6 +210,104 @@
             }
             return myvalue;
         }
+        //paso 6 | MixColumns
+        function step6(arr){
+            let detarr=[
+                ["02","03","01","01"],
+                ["01","02","03","01"],
+                ["01","01","02","03"],
+                ["03","01","01","02"]
+            ]
+            let arr2ret=[],myval,Helper=[]
+            myarr=transpose(arr)
+            for(let i=0;i<myarr.length;i++){
+                myval=myarr[i]
+                Helper=[]
+                for(let k=0;k<myarr[0].length;k++){
+                    Helper.push(step6multhelper(myval,detarr[k]))
+                }
+                if(arr2ret.length==0){
+                    arr2ret=[Helper]
+                }else{
+                    arr2ret.push(Helper)
+                }
+            }
+            return upper(transpose(arr2ret))
+        }
+        function step6multhelper(marr1,marr2){
+            let retvalue="",tempvalue
+            for(let mi=0;mi<marr1.length;mi++){
+                if(marr2[mi]==1){
+                    tempvalue=marr1[mi]
+                }else if(marr2[mi]==2){
+                    tempvalue=step6helper(marr1[mi].toLowerCase())
+                }else{
+                    a=marr1[mi]
+                    if(a.length % 2 != 0){
+                        a="0"+a
+                    }
+                    myan = Buffer.from(a, 'hex')
+                    b=step6helper(marr1[mi].toLowerCase())
+                    if(b.length % 2 != 0){
+                        b="0"+b
+                    }
+                    mybn = Buffer.from(b, 'hex')
+                    tempvalue= xor(myan, mybn).toString('hex')
+                }
+                tempvalue=tempvalue.toUpperCase()
+                if(retvalue==""){
+                    retvalue=[tempvalue]
+                }else{
+                    retvalue.push(tempvalue)
+                }
+            }
+            let fval=""
+            for(let mi=0;mi<retvalue.length-1;mi++){
+                if(fval==""){
+                    a = retvalue[mi]
+                }else{
+                    a =fval
+                }
+                if(a.length % 2 != 0){
+                    a="0"+a
+                }
+                mya = Buffer.from(a, 'hex')
+                b=retvalue[mi+1]
+                if(b.length % 2 != 0){
+                    b="0"+b
+                }
+                myb = Buffer.from(b, 'hex')
+                fval= xor(mya, myb).toString('hex')
+            }
+            return fval
+        }
+        function step6helper(txtorigin){
+            txt= hex2bin(txtorigin)
+            let myarr=[]
+            let mval=""
+            myarr= txt.split("")
+            if(myarr.length==8){
+                myarr.shift()
+                myarr.push("0")
+            
+            for(myi=0;myi<myarr.length;myi++){
+                mval+=myarr[myi]
+            }
+            a = bin2hex(mval)
+            if(a.length % 2 != 0){
+                a="0"+a
+            }
+            af = Buffer.from(a, 'hex')
+            bf = Buffer.from("1B", 'hex')
+            return xor(af, bf).toString('hex')
+            }else{
+                myarr.push("0")
+                for(myi=0;myi<myarr.length;myi++){
+                    mval+=myarr[myi]
+                }
+                return bin2hex(mval)
+            }
+        }
         //Imprimir matrices 4x4
         function print4x4(arr){
             for(i=0;i<4;i++){
@@ -210,6 +315,59 @@
                     shell.value+=arr[i][j]+" "
                 }  
                 shell.value+="\n"
+            }
+            shell.value+="\n"
+        }
+        //Imprimir claves
+        function printkeys(arr){
+            shell.value+="Estado:       Subclave 1:   Subclave 2:   Subclave 3:   Subclave 4:   Subclave 5:\n"
+            let n1=0,n2=6
+            for(j=0;j<reply[0].length;j++){
+                for(mi=n1;mi<n2;mi++){
+                    printrow(reply[mi][j])
+                }
+                shell.value+="\n"
+                if(j==3 & n1==0){
+                    shell.value+="\nSubclave 6:   Subclave 7:   Subclave 8:   Subclave 9:   Subclave 10:\n"
+                    n1=6
+                    n2=11
+                    j=0
+                }
+            }
+            shell.value+="\n"
+        }
+        function printrow(arr){
+            for(i=0;i<arr.length;i++){
+                shell.value+=arr[i]+" "
+            }
+            shell.value+="  "
+        }
+        //Imprimpir matrices de cifrado
+        function finalprint(arr,n){
+            if(n!=10){
+                shell.value+="------------------------------------------Ronda "+n+"-------------------------------------------\n"
+            }else{
+                shell.value+="------------------------------------------Ronda "+n+"------------------------------------------\n"
+            }
+           
+            shell.value+="Entrada:      SubBytes:     ShiftRows:    MixColumns:   Subclave:\n"
+            for(j=0;j<arr[0].length;j++){
+                for(mi=0;mi<arr.length;mi++){
+                    printrow(arr[mi][j])
+                }
+                shell.value+="\n"
+            }
+            if(n==10){
+                shell.value+="--------------------------------------------------------------------------------------------"
+            }
+            shell.value+="\n"
+        }
+        //Imprimir texto cifrado
+        function printencrypt(arr){
+            for(i=0;i<arr.length;i++){
+                for(j=0;j<arr.length;j++){
+                    finalout.value+=arr[i][j]
+                }
             }
         }
         //transposicion de matrices
@@ -223,4 +381,13 @@
                 copy2.push(copy)
             }
             return copy2
+        }
+        //Elevar caracteres
+        function upper(arr){
+            for(let i=0;i<arr.length;i++){
+                for(let j=0;j<arr[0].length;j++){
+                    arr[i][j]=arr[i][j].toUpperCase()
+                }
+            }
+            return arr
         }
