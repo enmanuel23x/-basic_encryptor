@@ -210,3 +210,87 @@ document.getElementById("hexa").value="";
             }
             return myvalue;
         }
+
+        //Imprimir matrices 4x4
+        function print4x4(arr){
+            for(i=0;i<4;i++){
+                for(j=0;j<4;j++){
+                    shell.value+=arr[i][j]+" "
+                }  
+                shell.value+="\n"
+            }
+            shell.value+="\n"
+        }
+        //Imprimir claves
+        function printkeys(arr){
+            shell.value+="Estado:       Subclave 1:   Subclave 2:   Subclave 3:   Subclave 4:   Subclave 5:\n"
+            let n1=0,n2=6
+            for(j=0;j<reply[0].length;j++){
+                for(mi=n1;mi<n2;mi++){
+                    printrow(reply[mi][j])
+                }
+                shell.value+="\n"
+                if(j==3 & n1==0){
+                    shell.value+="\nSubclave 6:   Subclave 7:   Subclave 8:   Subclave 9:   Subclave 10:\n"
+                    n1=6
+                    n2=11
+                    j=0
+                }
+            }
+            shell.value+="\n"
+        }
+        function printrow(arr){
+            for(i=0;i<arr.length;i++){
+                shell.value+=arr[i]+" "
+            }
+            shell.value+="  "
+        }
+        //Imprimpir matrices de cifrado
+        function finalprint(arr,n){
+            if(n!=10){
+                shell.value+="------------------------------------------Ronda "+n+"-------------------------------------------\n"
+            }else{
+                shell.value+="------------------------------------------Ronda "+n+"------------------------------------------\n"
+            }
+           
+            shell.value+="Entrada:      SubBytes:     ShiftRows:    MixColumns:   Subclave:\n"
+            for(j=0;j<arr[0].length;j++){
+                for(mi=0;mi<arr.length;mi++){
+                    printrow(arr[mi][j])
+                }
+                shell.value+="\n"
+            }
+            if(n==10){
+                shell.value+="--------------------------------------------------------------------------------------------"
+            }
+            shell.value+="\n"
+        }
+        //Imprimir texto cifrado
+        function printencrypt(arr){
+            for(i=0;i<arr.length;i++){
+                for(j=0;j<arr.length;j++){
+                    finalout.value+=arr[i][j]
+                }
+            }
+        }
+        //transposicion de matrices
+        function transpose(matrix) {
+            var copy=[],copy2=[]
+            for(j=0;j<matrix[0].length;j++){
+                copy=[]
+                for(i=0;i<matrix.length;i++){
+                    copy.push(matrix[i][j])
+                }
+                copy2.push(copy)
+            }
+            return copy2
+        }
+        //Elevar caracteres
+        function upper(arr){
+            for(let i=0;i<arr.length;i++){
+                for(let j=0;j<arr[0].length;j++){
+                    arr[i][j]=arr[i][j].toUpperCase()
+                }
+            }
+            return arr
+        }
