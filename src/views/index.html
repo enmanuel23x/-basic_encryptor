@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Text 2 Hex</title>
+    <title id="title"></title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700">
@@ -13,55 +13,86 @@
 
 <body>
     <section id="main" style="background-color: black;">
+            <div class="container text-center" id="buttons" style="max-width: 670px;margin-top: 15px;margin-bottom: 15px;padding: 0;">
+                    <div class="row" style="text-align: initial;margin: 0px;padding:0px;">
+                        <div class="col flex-column" style="    padding: 0;">
+                            <h1 id="t4" class="headers" style="float:left; font-size: 1.5rem;color: white;display: inline-flex;"></h1>
+                            <div class="select" style="float:left;width: 185px;">
+                                <select name="slct" id="lang" onchange="changelang()">
+                                    </select>
+                                </div>
+                                <div class="select" style="float: right;">
+                                    <select name="slct" id="act" onchange="changeopc()">
+                                        </select>
+                                    </div>
+                                <h1 id="t5" class="headers" style="float: right;font-size: 1.5rem;color: white;display: inline-flex;"></h1>
+                                </div>
+                                </div>
+            </div>
         <div class="container" id="code">
             <div class="row">
                 <div class="col" style="padding-left: 0px;">
-                    <h1 id="t1" class="headers" style="font-size: 1.5rem;color: white;">Text Input</h1>
-                </div>
-                <div class="col" style="padding-left: 0px; ">
-                    <h1 id="t2" class="headers" style="font-size: 1.5rem;margin-left: 39px; color: white;">Encrypted Out</h1>
+                    <h1 id="t3" class="headers" style="font-size: 1.5rem;color: white;"></h1>
                 </div>
             </div>
-            <div class="row" style="color: black;">
+            <div id="e3" class="col2">
+                    <div id="Key" class="editor">
+                        <textarea maxlength="32" id="key" rows="10" cols="30" style="font-size: 29px;color: white; background-color: darkslategray;border-radius: 12px;"></textarea>
+                    </div>
+            </div>
+            <div class="row">
+                <div class="col" style="padding-left: 0px;">
+                    <h1 id="t1" class="headers" style="font-size: 1.5rem;color: white;"></h1>
+                </div>
+            </div>
                 <div id="e1" class="col2">
-                    <div id="Text" class="editor">
-                        <textarea maxlength="16" id="text" rows="20" cols="30" style="color: white; background-color: darkslategray;border-radius: 12px;"></textarea>
+                    <div class="editor">
+                        <textarea maxlength="16" id="text" rows="10" cols="30" style="font-size: 29px;color: white; background-color: darkslategray;border-radius: 12px;"></textarea>
                     </div>
                 </div>
-                <a class="container2">
-                    <i id="icon"class="fa fa-arrow-right" style="color: black;"></i>
-                </a>
+                <div class="row">
+                    <div class="col" style="padding-left: 0px; ">
+                        <h1 id="t2" class="headers" style="font-size: 1.5rem; color: white;"></h1>
+                    </div>
+                </div>
                 <div id="e2" class="col2">
                     <div id="Hexa" class="editor">
-                        <textarea readonly id="hexa" rows="20" cols="30" style="color: white;background-color: darkslategray;border-radius: 12px;"></textarea></textarea>
+                        <textarea readonly id="hexa" rows="10" cols="30" style="font-size: 29px;color: white;background-color: darkslategray;border-radius: 12px;"></textarea></textarea>
                     </div>
                 </div>
-            </div>
         </div>
-        <div class="container text-center" id="buttons">
+        <div class="container text-center" id="buttons" style="margin-top: 15px;">
             <div class="row" style="text-align: center;">
-                <div class="col d-flex flex-column"><button onclick="read()" class="btn btn-primary buttons" type="button" style="background-color: darkslategray; margin: auto;width: 150px;color: white;"><i class="fas fa-play" style="color: white;"></i>&nbsp;Translate</button></div>
+                <div class="col flex-column">
+                    <button onclick="reset()" class="btn btn-primary buttons" type="button" style="background-color: darkslategray; margin: auto;width: 150px;color: white;margin-right: 80px;">
+                        <i class="fas fa-sync" style="color: white;"></i>
+                        &nbsp;<span id="refre"></span></button>
+                    <button id="transa" onclick="read()" class="btn btn-primary buttons" type="button" style="background-color: darkslategray; margin: auto;width: 150px;color: white;">
+                        <i class="fas fa-play" style="color: white;"></i>
+                        &nbsp;<span id="trans"></span></button>
+                        </div>
             </div>
         </div>
         <div class="container" id="shell">
-                <div class="row">
-                    <div lass="col">
-                        <h1 class="headers" style="color: white;">Shell</h1>
+            <div class="row">
+                <div lass="col">
+                    <h1 class="headers" style="color: white;" id="sh"></h1>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col"><textarea readonly id="shell-out" style="background-color: darkslategray; height: 330px;"></textarea></div>
+            <div class="row">
+                <div class="col"><textarea readonly id="shell-out" style="font-family: monospace;background-color: darkslategray; height: 170px;"></textarea></div>
                 </div>
             </div>
     </section>
     <script src="./assets/js/jquery.min.js"></script>
     <script src="./assets/bootstrap/js/bootstrap.min.js"></script>
     <script>
-
+        
     </script>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/main.js"></script>
+    <script src="assets/js/encrypt.js"></script>
 </body>
 
 </html>
