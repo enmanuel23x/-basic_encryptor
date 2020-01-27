@@ -35,12 +35,16 @@ var sbox=[
         shell.value+=words.word1+document.getElementById("text").value+"\n\n"
         shell.value+=words.word2+text+"\n\n"
         text=bin2hex(text);
+        //document.getElementById("text").value=text
         //text="3243F6A8885A308D313198A2E0370734"
         shell.value+=words.word3+text+"\n\n"
         var arr2 = text2matrix(text)
         //Clave Principal: 2B7E151628AED2A6ABF7158809CF4F3C
         //var clavep= text2matrix("2B7E151628AED2A6ABF7158809CF4F3C")
-        var clavep=verify(document.getElementById('key').value,32)
+        var clavep=verify(document.getElementById('key').value,16)
+        clavep= require('string-to-binary')(clavep);
+        clavep=bin2hex(clavep);
+        //document.getElementById('key').value=clavep
         clavep= text2matrix(clavep)
         claves=[]
         claves.push(clavep)
@@ -392,13 +396,11 @@ var sbox=[
     }
     //Rellenar con espacios
     function verify(t,n){
-        let r=""
+        let r=t,j=0
         if(t.length<n){
             for(let i=0;i<n-t.length;i++){
                 r+=" "
             }
-        }else{
-            r=t
         }
         return r
     }

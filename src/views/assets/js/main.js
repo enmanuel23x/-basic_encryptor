@@ -1,6 +1,7 @@
 var opc=0;
 var words
 var config
+
 const fs = require('fs');
         //Oyente para comenzar el proceso segun metodo
         function read(){
