@@ -37,7 +37,7 @@
             </div>
             <div id="e3" class="col2">
                     <div id="Key" class="editor">
-                        <textarea onblur="isValidhex(this)" maxlength="16" id="key" rows="10" cols="30" style="font-size: 29px;color: white; background-color: darkslategray;border-radius: 12px;"></textarea>
+                        <textarea maxlength="16" id="key" rows="10" cols="30" style="font-size: 29px;color: white; background-color: darkslategray;border-radius: 12px;"></textarea>
                     </div>
             </div>
             <div class="row">
@@ -67,7 +67,7 @@
                     <button onclick="reset()" class="btn btn-primary buttons" type="button" style="background-color: darkslategray; margin: auto;width: 150px;color: white;margin-right: 80px;">
                         <i class="fas fa-sync" style="color: white;"></i>
                         &nbsp;<span id="refre"></span></button>
-                    <button id="transa" onclick="read()" class="btn btn-primary buttons" type="button" style="background-color: darkslategray; margin: auto;width: 150px;color: white;">
+                    <button id="transa" onclick="read()" class="btn btn-primary buttons" type="submit" style="background-color: darkslategray; margin: auto;width: 150px;color: white;">
                         <i class="fas fa-play" style="color: white;"></i>
                         &nbsp;<span id="trans"></span></button>
                         </div>
@@ -93,6 +93,9 @@
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/encrypt.js"></script>
+    <script src="assets/js/decrypt.js"></script>
+    <script src="assets/js/vars.js"></script>
+    <script src="assets/js/swal.js"></script>
 </body>
 
 </html>
