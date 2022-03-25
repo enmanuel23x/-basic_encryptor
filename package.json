@@ -11,7 +11,7 @@
   "dependencies": {
     "any-base": "^1.1.0",
     "bitwise-buffer": "^1.0.2",
-    "electron": "^7.1.1",
+    "electron": "^13.6.6",
     "string-to-binary": "^0.1.2"
   }
 }
